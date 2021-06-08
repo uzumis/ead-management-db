@@ -18,17 +18,17 @@ create table funcionario(
 create table professor(
     funcionario_cd_funcionario number(2),
     cd_professor number(2),
-    constraint pk_professor primary key (funcionario_cd_funcionario,cd_professor)
+    constraint pk_professor primary key (cd_professor)
     );
 create table tutor(
     funcionario_cd_funcionario number(2),
     cd_tutor number(2),
-    constraint pk_tutor primary key (funcionario_cd_funcionario,cd_tutor)
+    constraint pk_tutor primary key (cd_tutor)
     );
 create table gerente(
     funcionario_cd_funcionario number (2),
     cd_gerente number(2),
-    constraint pk_gerente primary key (funcionario_cd_funcionario,cd_gerente)
+    constraint pk_gerente primary key (cd_gerente)
     );
 create table funcionario_telefone(
     funcionario_cd_funcionario number (2),
@@ -38,8 +38,8 @@ create table funcionario_telefone(
     );
 create table tutor_gerencia_forum(
 tutor_cd_tutor number (2),
-id_forum number (5),
-constraint pk_tutor_gerencia_forum primary key (tutor_cd_tutor,id_forum)
+forum_id_forum number (5),
+constraint pk_tutor_gerencia_forum primary key (tutor_cd_tutor,forum_id_forum)
 );
 create table gerente_coordena (
     gerente_cd_gerente number(2),
@@ -54,14 +54,14 @@ create table aula (
     data_auka date,
     link_material_apoio char (60),
     cd_aula number (5),
-    constraint pk_aula primary key (professor_cd_professor,cd_aula)
+    constraint pk_aula primary key (cd_aula,professor_cd_professor)
     );
 create table modulo(
     professor_cd_professor number(2),
     cd_modulo number(3),
     nome_modulo char(20),
     carga_horaria number(3),
-    constraint pk_modulo primary key (professor_cd_professor, cd_modulo)
+    constraint pk_modulo primary key (cd_modulo)
     );
 create table forum(
     id_forum number (5),
@@ -91,13 +91,11 @@ create table turma (
     );
 create table aluno_assiste_aula(
     aula_cd_aula number (5),
-    aluno_matricula_aluno number(11),
-    constraint pk_aluno_assiste_aula primary key (aula_cd_aula,aluno_matricula_aluno)
+    aluno_matricula_aluno number(11)
     );
 create table aula_modulo(
     aula_cd_aula number(5),
-    modulo_cd_modulo number(5),
-    constraint pk_aula_modulo primary key (aula_cd_aula,modulo_cd_modulo)
+    modulo_cd_modulo number(5)
     );
 create table aluno(
     matricula_aluno number(11),
@@ -138,3 +136,126 @@ create table aula_dashboard(
     aula_concluida number(5),
     constraint pk_aula_dashboard primary key (dashboard_id_dashboard, cd_aula_c)
     );
+--b) Inserções das chaves estrangeiras por tabela
+-- Professor:
+alter table professor 
+add constraint fk_funcionario_professor 
+foreign key (funcionario_cd_funcionario) 
+references funcionario (cd_funcionario);
+--Tutor:
+alter table tutor
+add constraint fk_funcionario_tutor
+foreign key (funcionario_cd_funcionario) 
+references funcionario (cd_funcionario);
+--Gerente:
+alter table gerente
+add constraint fk_funcionario_gerente
+foreign key (funcionario_cd_funcionario) 
+references funcionario (cd_funcionario);
+--funcionario_telefone
+alter table funcionario_telefone
+add constraint fk_funcionario_funcionario_telefone
+foreign key (funcionario_cd_funcionario) 
+references funcionario (cd_funcionario);
+--gerente_coordena
+alter table gerente_coordena
+add constraint fk_gerente_gerente_coordena 
+foreign key (gerente_cd_gerente)
+references gerente (cd_gerente);
+
+alter table gerente_coordena
+add constraint fk_tutor_gerente_coordena
+foreign key (tutor_cd_tutor)
+references tutor(cd_tutor);
+
+alter table gerente_coordena
+add constraint fk_professor_gerente_coordena
+foreign key (professor_cd_professor)
+references professor(cd_professor);
+
+alter table gerente_coordena
+add constraint fk_aluno_gerente_coordena
+foreign key (aluno_matricula_aluno)
+references aluno (matricula_aluno);
+
+--Tutor Gerencia Forum:
+alter table tutor_gerencia_forum
+add constraint fk_tutor_tutor_gerencia_forum
+foreign key (tutor_cd_tutor)
+references tutor (cd_tutor);
+
+alter table tutor_gerencia_forum
+add constraint fk_forum_tutor_gerencia_forum
+foreign key (forum_id_forum)
+references forum(id_forum);
+
+--forum_m_aluno
+alter table forum_m_aluno
+add constraint fk_forum_forum_m_aluno
+foreign key(forum_id_forum)
+references forum (id_forum);
+
+--forum_m_tutores
+alter table forum_m_tutores
+add constraint fk_forum_forum_m_tutores
+foreign key (forum_id_forum)
+references forum (id_forum);
+
+--Aula
+alter table aula 
+add constraint fk_professor_aula 
+foreign key (professor_cd_professor)
+references professor (cd_professor);
+
+--Modulo
+alter table modulo
+add constraint fk_professor_modulo
+foreign key (professor_cd_professor)
+references professor(cd_professor);
+
+--Turma 
+alter table turma 
+add constraint fk_gerente_turma
+foreign key (gerente_cd_gerente)
+references gerente(cd_gerente);
+
+--aluno_assiste_aula
+
+-- falta mexer em um foreign table-- ver aqui!!!!!!!!!!!!!!!!!!!!!!
+
+alter table aluno_assiste_aula
+add constraint fk_aluno_aluno_assiste_aula
+foreign key (aluno_matricula_aluno)
+references aluno (matricula_aluno);
+
+--aula modulo
+
+alter table aula_modulo
+add constraint fk_modulo_aula_modulo
+foreign key (modulo_cd_modulo)
+references modulo (cd_modulo);
+
+--Dashboard
+alter table dashboard
+add constraint fk_aluno_dashboard
+foreign key(aluno_matricula_aluno)
+references aluno(matricula_aluno);
+
+-- modulo_concluido
+alter table modulo_concluido
+add constraint fk_dashboard_modulo_concluido
+foreign key (dashboard_id_dashboard)
+references dashboard (id_dashboard);
+
+-- Aula_dashboard
+alter table aula_dashboard
+add constraint fk_dashboard_aula_dashboard
+foreign key (dashboard_id_dashboard)
+references dashboard(id_dashboard);
+
+--aluno_telefone
+
+alter table aluno_telefone
+add constraint fk_aluno_aluno_telefone
+foreign key (aluno_matricula_aluno)
+references aluno(matricula_aluno);
