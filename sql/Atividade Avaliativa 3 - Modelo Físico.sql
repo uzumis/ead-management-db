@@ -1,4 +1,4 @@
--- 2)
+-- Questão 2)
 --a) Definição das Tabelas conforme modelo relacional
 
 create table funcionario(
@@ -51,7 +51,7 @@ create table gerente_coordena (
 create table aula (
     professor_cd_professor number (2),
     link_aula char(60),
-    data_auka date,
+    data_aula date,
     link_material_apoio char (60),
     cd_aula number (5),
     constraint pk_aula primary key (cd_aula,professor_cd_professor)
@@ -84,7 +84,7 @@ create table turma (
     cd_turma number(4),
     gerente_cd_gerente number(4),
     aluno_matricula_aluno number(11),
-    data_criacao_turma date default sysdate,
+    data_criacao_turma date not null,
     turno number(3),
     data_encerramento_turma date,
     constraint pk_turma primary key (cd_turma,aluno_matricula_aluno)
@@ -136,6 +136,7 @@ create table aula_dashboard(
     aula_concluida number(5),
     constraint pk_aula_dashboard primary key (dashboard_id_dashboard, cd_aula_c)
     );
+	
 --b) Inserções das chaves estrangeiras por tabela
 -- Professor:
 alter table professor 
@@ -221,8 +222,6 @@ references gerente(cd_gerente);
 
 --aluno_assiste_aula
 
--- falta mexer em um foreign table-- ver aqui!!!!!!!!!!!!!!!!!!!!!!
-
 alter table aluno_assiste_aula
 add constraint fk_aluno_aluno_assiste_aula
 foreign key (aluno_matricula_aluno)
@@ -259,3 +258,59 @@ alter table aluno_telefone
 add constraint fk_aluno_aluno_telefone
 foreign key (aluno_matricula_aluno)
 references aluno(matricula_aluno);
+
+
+
+--Questão 3 
+--a)
+
+alter table turma modify turno varchar(1);
+
+--b)
+
+alter table aula drop column link_material_apoio;
+
+--c)
+
+drop table funcionario_telefone;
+
+
+--Questãio 4
+
+--a) 
+--Funcionario 
+
+insert into funcionario (cd_funcionario,cpf_do_funcionario,nome_do_funcionario,data_nasc_func,email_func,nomenumlogradouro,cidade,estado,cep,login_func,senha_func) 
+values ('01','1111111111','Jorge',date '1981-05-19','jorge@email.com','rua.laranja','belem','para','66044141','jorgeger','123456');
+
+insert into funcionario (cd_funcionario,cpf_do_funcionario,nome_do_funcionario,data_nasc_func,email_func,nomenumlogradouro,cidade,estado,cep,login_func,senha_func) 
+values ('02','1111111222','Rosana',date '1990-08-21','rosana@email.com','rua.marrom','ananindeua','para','66014277','rosanatut','654321');
+
+insert into funcionario (cd_funcionario,cpf_do_funcionario,nome_do_funcionario,data_nasc_func,email_func,nomenumlogradouro,cidade,estado,cep,login_func,senha_func) 
+values ('03','1111111333','Chimira',date '1985-02-28','chimira@email.com','rua.cinza','belem','para','66017577','chimiratut','123oliveira4');
+
+insert into funcionario (cd_funcionario,cpf_do_funcionario,nome_do_funcionario,data_nasc_func,email_func,nomenumlogradouro,cidade,estado,cep,login_func,senha_func) 
+values ('04','1111111444','Mutema',date '1992-06-21','mutema@email.com','Av.Augusto Montenegro','belem','para','66017741','mutetmal','salvadordapatria123');
+
+insert into funcionario (cd_funcionario,cpf_do_funcionario,nome_do_funcionario,data_nasc_func,email_func,nomenumlogradouro,cidade,estado,cep,login_func,senha_func) 
+values ('05','1111111555','Sasá',date '1979-01-28','sasa@email.com','R.Quintino Bocaiuva','belem','para','66017741','sasaprof','noveladasnove123');
+
+--verificador após insert, funcionario:
+select cd_funcionario,cpf_do_funcionario,nome_do_funcionario,data_nasc_func,email_func,nomenumlogradouro,cidade,estado,cep,login_func,senha_func from funcionario
+
+-- as ramificações do funcionario.
+-- gerente
+insert into gerente (funcionario_cd_funcionario,cd_gerente) values ((select cd_funcionario from funcionario where cd_funcionario = '01'), '01');
+-- professor 
+insert into professor (funcionario_cd_funcionario,cd_professor) values ((select cd_funcionario from funcionario where cd_funcionario = '02'), '01');
+insert into professor (funcionario_cd_funcionario,cd_professor) values ((select cd_funcionario from funcionario where cd_funcionario = '03'), '02');
+--tutor
+insert into tutor (funcionario_cd_funcionario,cd_tutor) values ((select cd_funcionario from funcionario where cd_funcionario = '04'), '01');
+insert into tutor (funcionario_cd_funcionario,cd_tutor) values ((select cd_funcionario from funcionario where cd_funcionario = '05'), '02');
+
+--Aula
+insert into aula (professor_cd_professor,link_aula,data_aula,cd_aula) 
+values ((select cd_professor from professor where cd_professor = '01'),'http://ead.com.br/aula01',date'21-08-06','00001');
+
+insert into aula (professor_cd_professor,link_aula,data_aula,cd_aula) 
+values ((select cd_professor from professor where cd_professor = '02'),'http://ead2.com.br/aula01',date'21-08-08','00002');
